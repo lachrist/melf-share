@@ -1,0 +1,19 @@
+{
+  "name": "kalah",
+  "description": "(A)Synchronous remote references based on http://npmjs.com/melf",
+  "version": "0.0.2",
+  "author": {
+    "name": "Laurent Christophe",
+    "email": "lachrist@vub.ac.be"
+  },
+  "repository": "lachrist/kalah",
+  "homepage": "http://github.com/lachrist/kalah",
+  "license": "MIT",
+  "main": "main.js",
+  "keywords": [
+    "Remote reference",
+    "Melf",
+    "Synchronous",
+    "Asynchronous"
+  ]
+}

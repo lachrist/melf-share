@@ -1,26 +1,20 @@
-const SharedObject = require("./shared-object.js");
-const SharedSymbol = require("./shared-symbol.js");
+
+const Traps = require("./traps.js");
+const Default = require("./default.js");
 const Serialize = require("./serialize.js");
 const Instantiate = require("./instantiate.js");
 
 module.exports = (melf, synchronous) => {
-  const sobject = SharedObject(melf, synchronous);
-  const ssymbol = SharedSymbol(melf);
-  const serialize = Serialize(sobject.serialize, ssymbol.serialize);
-  const instantiate = Instantiate(sobject.instantiate, ssymbol.instantiate);
-  sobject.resolve_serialize(serialize);
-  sobject.resolve_instantiate(instantiate);
+  const keys = new Map();
+  const values = new Map();
   return {
-    ownerof: (value) => shared_object.ownerof(value) || shared_symbol.ownerof(value) || melf.alias,
-    serialize: serialize;
-    instantiate: instantiate
+    ownerof: (value) => {
+      const key = keys.get(value);
+      return key ? key.split("/")[0] : melf.alias
+    },
+    serialize: Serialize(melf.alias, keys, values);
+    instantiate: Instantiate(Traps(melf, synchronous), keys, values);
   };
 };
 
 module.exports.default = require("./default.js");
-
-  const register = (key, value) => {
-    keyof.set(key, value)
-    valueof.set(value, key);
-    return proxy;
-  };

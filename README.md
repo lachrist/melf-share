@@ -19,65 +19,27 @@ Usage [here](/demo), live demo [here](https://cdn.rawgit.com/lachrist/kalah/1d45
     * `json :: JSON`
     * `value :: *`
 
-## `require("melf-sharing").rest`
+## `require("melf-sharing").default`
 
-A symbol indicating the hint that should be used for the rest of the properties of an object or an array.
+A symbol indicating the hint that should be used by default to serialize the properties of an object.
 
 ## Hints
 
-- "*"
-
-
-Hint          | Succeed when true                                                              | Convertion                        | Mistmatch             | arguments[2]        | arguments[3]
---------------|--------------------------------------------------------------------------------|-----------------------|---------------------|-----------------
-**Atomic**    |                                                                                |                         |                     |
-"null"        | `value === null`                                                               | 
-"undefined"   | `value === undefined`                                                          | `undefined`
-"boolean"     | `typeof value === "boolean"`                                                   | a boolean
-"booleanize"  | `typeof Boolean(value) === "boolean"`                                          | a boolean
-"number"      | `typeof value === "number"`                                                    | a number
-"numberify"   | `typeof Number(value) === "number"`                                            | a number
-"string"      | `typeof value === "string"`                                                    | a string
-"stringify"   | `typeof String(value) === "string`                                             | a string
-"json"        | `(JSON.stringify(value), true)`                                                | a JSON data                               |
-"symbol"      | `typeof value === "symbol`                                                     | a symbol   
-"primitive"   | `value === null || (typeof value !== "object" && typeof value !== "function")` | A copy of the primitive value
-"reference"   | `value !== null && (typeof value === "object" || typeof value === "function")` | A far reference
-"array"       | `Array.isArray(value)`                                                         | A far reference
-"function"    | `typeof value === "function"`                                                  | A far reference
-**Compound**
-["either"]
-| `for (let key in )`
-
-
-=======
-Atomic 
-
-Atomic hints are strings:
-* `"null"`: pass-by-value the `null` value, throws if not `null`.
-* `"undefined"`: pass-by-value the `undefined` value, throws if not `undefined`.
-* `"boolean"`: pass-by-value a boolean value, throws if not a boolean.
-* `"booleanify"`: pass-by-value a boolean, convert first if not a boolean.
-* `"number"`: pass-by-value a number (including `NaN`, `Infinity`, `-Infinity` and `-0`), throws if not a number.
-* `"numberify"`: pass-by-value a number (including `NaN`, `Infinity`, `-Infinity` and `-0`), convert first if not a number.
-* `"string"`: seripass-by-valuealize a string, throws if not a string.
-* `"stringify"`: pass-by-value a string, convert first if not a string.
-* `"json"`: pass-by-value a JSON-stringify-able structure.
-// * `"well-known-symbol"`: pass-by-value a [well-known symbol](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol), throws if not a well-known symbol. 
-// * `"symbol"`: pass-by-value [well-known symbol](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol) pass-by-reference a symbol, throws if not a symbol.
-* `"primitive"`: pass-by-value a primitive (`null`, `undefined`, boolean, number, string, symbol), throws if not a primitive.
-
-* `"symbol"`: pass a copy
-
-* `"object"`: pass-by-reference an object (including arrays an functions), throws if not an object.
-* `"array"`: pass-by-reference an array, throws if not an array.
-* `"function"`: pass-by-reference a function, throws if not a function.
-
-* `reference`: pass a remote refernce of a symbol or an object (including ).
-
-* `"*"`: serialize a non-symbolic primitive or serialize a well-known symbol or share a non well-known symbol or share an object.
-
-Compound
-* `["either", hint1, hint2, ...]`: use the first hint that doesn't throw, throws if all hints threw.
-* `[hint1, hint2, ..., MelfSharing.rest, hint]`: serialize the content of an object as if it is an array, throw if not an object.
-* `{key1:hint1, key2:hint2, ..., [MelfSharing.rest]:hint}`: serialize the content of an object, throw if not an object.
+* `"*"`: Serialize *any* value.
+  After instantiation with a different MelfSharing instance:
+  * non-symbolic primitives:
+    will refer to the same value (`undefined`, `NaN`, `+Infinity`, `-Infinity`, `-0` are supported).
+  * [well-known symbol](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol):
+    will refer the local corresponding well-known symbol.
+  * other symbols:
+    will refer to a dedicated symbol with the same string representation.
+  * objects:
+    will refer to a dedicated proxy whose traps forward operations to the serializing process.
+* `[Hint]`:
+  The elements of a hint-array are hints which will be used to convert the corresponding element of the given value.
+  If the given value has a longer length than the hint-array, the last hint will be used repeatedly.
+  Instantiation will result to a new local array.
+* `{Hint}`:
+  The properties of a hint-object are hints which will be used to convert the corresponding properties of the given value.
+  `require("melf-sharing").default` can be used to set the default hint to use.
+  Instantiation will result in a new local object.

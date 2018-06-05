@@ -1,25 +1,80 @@
 
-// TODO make "symbol | string" possible
+exports.getPrototypeOf = [[], "*"];
+exports.setPrototypeOf = [["*"], "*"];
+exports.isExtensible = [[], "*"];
+exports.preventExtensions = [[], ["*"]];
+exports.getOwnPropertyDescriptor = [["*"], {[Rest]:"*"}];
+exports.defineProperty = [["*", {[Rest]:"*"}], "*"];
+exports.has = [["*"], "*"];
+exports.get = [["*", "*"], "*"];
+exports.set = [["*", "*", "*"], "*"];
+exports.deleteProperty = [["*"], "*"];
+exports.ownKeys = [[], ["*"]];
+exports.apply = [["*", ["*"]], "*"];
+exports.construct = [["*"], "*"];
 
-const descriptor = {
-  configurable: "boolean",
-  enumerable: "boolean",
-  writable: "boolean",
-  value: "any",
-  get: ["CHOICE", "undefined", "reference"],
-  set: ["CHOICE", "undefined", "reference"]
-};
 
-exports.getPrototypeOf = [[], ["CHOICE", "null", "reference"]];
-exports.setPrototypeOf = [["CHOICE", "null", "reference"], "boolean"];
-exports.isExtensible = [[], "boolean"];
-exports.preventExtensions = [[], "boolean"];
-exports.getOwnPropertyDescriptor = [["primitive"], "any"]; // TODO change return type to descriptor 
-exports.defineProperty = [["primitive", descriptor], "boolean"];
-exports.has = [["primitive"], "boolean"];
-exports.get = [["primitive", "any"], "any"];
-exports.set = [["primitive", "any", "any"], "boolean"];
-exports.deleteProperty = [["primitive"], "boolean"];
-exports.ownKeys = [[], ["UNIFORM-ARRAY", "string"]];
-exports.apply = [["any", ["UNIFORM-ARRAY", "any"]], "any"];
-exports.construct = [["UNIFORM-ARRAY", "any"], "any"]; // TODO change return type to reference
+
+exports.getPrototypeOf = [
+  [],
+  ["EITHER", "null", "reference"]];
+exports.setPrototypeOf = [
+  [
+    ["EITHER", "null", "reference"]],
+  "boolean"];
+exports.isExtensible = [
+  [],
+  "boolean"];
+exports.preventExtensions = [
+  [],
+  "boolean"];
+exports.getOwnPropertyDescriptor = [
+  [
+    ["EITHER", "shared-symbol", "to-string"]],
+  [
+    "EITHER",
+    {
+      value: "any",
+      writable: "boolean",
+      enumerable: "boolean",
+      configurable: "boolean"},
+    {
+      get: ["EITHER", "undefined", "reference"],
+      set: ["EITHER", "undefined", "reference"],
+      enumerable: "boolean",
+      configurable: "boolean"}]];
+exports.defineProperty = [
+  [
+    ["EITHER", "shared-symbol", "string-like"],
+    ["UNIFORM-OBJECT", "*"]],
+  "boolean"];
+exports.has = [
+  [
+    ["EITHER", "shared-symbol", "string-like"]],
+  "boolean"];
+exports.get = [
+  [
+    ["EITHER", "shared-symbol", "string-like"],
+    "*"],
+  "*"];
+exports.set = [
+  [
+    ["EITHER", "shared-symbol", "string-like"],
+    "*",
+    "reference"],
+  "boolean"];
+exports.deleteProperty = [
+  [
+    ["EITHER", "shared-symbol", "string-like"]],
+  "boolean"];
+exports.ownKeys = [
+  [],
+  ["UNIFORM-ARRAY", "string"]];
+exports.apply = [
+  [
+    "*",
+    ["UNIFORM-ARRAY", "*"]],
+  "*"];
+exports.construct = [
+  ["UNIFORM-ARRAY", "*"],
+  "reference"];

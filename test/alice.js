@@ -1,15 +1,25 @@
-const Antena = require("antena/node");
 const Melf = require("melf");
-const MelfSharing = require("../main.js");
+const MelfShare = require("../main.js");
+const Primitives = require("./primitives.js");
 
-Melf(new Antena(process.argv[2]), "alice", (error, melf) => {
-  if (error)
-    throw error;
-  const sharing = MelfSharing(melf, false);
-  melf.rprocedures.object = (origin, data, callback) => {
-    callback(null, sharing.serialize({}));
-  };
-  melf.rprocedures.array = (origin, data, callback) => {
-    callback(null, sharing.serialize([]));
-  };
-});
+module.exports = (antena) => {
+  Melf(antena, "alice", (error, melf) => {
+    if (error)
+      throw error;
+    const share = MelfShare(melf, {sync:true});
+    const values = Object.assign({
+      object: {},
+      array: [],
+      arrow: () => {},
+      function: function () {},
+      symbol_foo: Symbol("foo"),
+      symbol_iterator: Symbol.iterator,
+      symbol_foo_global: Symbol.for("foo")
+    }, Primitives);
+    Object.keys(values).forEach((key) => {
+      melf.rprocedures[key] = (origin, data, callback) => {
+        callback(null, share.serialize(values[key]));
+      }
+    })
+  });
+};

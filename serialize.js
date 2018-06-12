@@ -1,4 +1,11 @@
 
+const wellkown = {};
+Reflect.ownKeys(Symbol).forEach((name) => {
+  if (typeof Symbol[name] === "symbol") {
+    wellkown[Symbol[name]] = name;
+  }
+});
+
 const UNDEFINED = void 0;
 const NEGATIVE_INFINITY = -1/0;
 const POSITIVE_INFINITY = 1/0;
@@ -14,7 +21,7 @@ module.exports = (alias, keys, values) => {
   const loop = (value, hint) => {
     if (value && Array.isArray(hint)) {
       const array = Array(value.length+1);
-      array[0] = null;
+      array[0] = "copy";
       for (let index = 0, length = value.length; index < length; index++)
         array[index+1] = loop(value[index], hint[index]);
       return array;
@@ -40,10 +47,10 @@ module.exports = (alias, keys, values) => {
         return value;
       case "string": return value;
       case "symbol":
-        if (value in SymbolNames)
-          return ["symbol", "well-knwon", SymbolNames[value]];
+        if (value in wellkown)
+          return ["symbol", "wellknown", wellkown[value]];
         if (Symbol.keyFor(value) !== UNDEFINED)
-          return ["symbol", "shared", Symbol.keyFor(value)];
+          return ["symbol", "global", Symbol.keyFor(value)];
         return ["symbol", keys.get(value) || link(value), String(value).slice(7, -1)];
       case "object":
         if (!value)
@@ -51,7 +58,7 @@ module.exports = (alias, keys, values) => {
         if (Array.isArray(value))
           return ["array", keys.get(value) || link(value)];
         return ["object", keys.get(value) || link(value)];
-      case "function": return ["function", keys.get(value) || link(value)];
+      case "function": return ["prototype" in value ? "function" : "arrow", keys.get(value) || link(value)];
     }
     throw new Error("Unrecognized type: " + typeof value);
   };

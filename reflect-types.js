@@ -2,7 +2,7 @@
 exports.getPrototypeOf = [["target"], "prototype"];
 exports.setPrototypeOf = [["target", "prototype"], "success"];
 exports.isExtensible = [["target"], "extensible"];
-exports.preventExtensions = [["target"], ["success"]];
+exports.preventExtensions = [["target"], "success"];
 exports.getOwnPropertyDescriptor = [["target", "key"], {}];
 exports.defineProperty = [["target", "key", {}], "success"];
 exports.has = [["target", "key"], "has"];

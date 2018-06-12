@@ -1,21 +1,21 @@
 
-const Far = require("./far.js");
+const RemoteTraps = require("./remote-traps.js");
 const Serialize = require("./serialize.js");
 const Instantiate = require("./instantiate.js");
 
-module.exports = (melf, synchronous) => {
+module.exports = (melf, options) => {
   const keys = new Map();
   const values = new Map();
-  const far = Far(melf, synchronous, values);
+  const traps = RemoteTraps(melf, options, values);
   const serialize = Serialize(melf.alias, keys, values);
-  const instantiate = Instantiate(far, keys, values);
-  far.resolve(serialize, instantiate);
+  const instantiate = Instantiate(traps, keys, values);
+  traps.resolve(serialize, instantiate);
   return {
     ownerof: (value) => {
       const key = keys.get(value);
       return key ? key.split("/")[0] : melf.alias;
     },
-    delete: (value) => {
+    discard: (value) => {
       const key = keys.get(value);
       if (key) {
         keys.delete(value);

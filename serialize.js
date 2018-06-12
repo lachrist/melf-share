@@ -1,28 +1,28 @@
-const Default = require("./default.js");
 
 const UNDEFINED = void 0;
 const NEGATIVE_INFINITY = -1/0;
 const POSITIVE_INFINITY = 1/0;
 
-module.exports = (alias, keyof, bind) => {
+module.exports = (alias, keys, values) => {
   let counter = 0;
   const link = (value) => {
     const key = alias + "/" + (++counter).toString(36);
-    keyof.set(value, key);
-    valueof.set(key, value);
+    keys.set(value, key);
+    values.set(key, value);
     return key;
   };
   const loop = (value, hint) => {
-    if (Array.isArray(hint)) {
-      const array = Array(value.length);
+    if (value && Array.isArray(hint)) {
+      const array = Array(value.length+1);
+      array[0] = null;
       for (let index = 0, length = value.length; index < length; index++)
-        array[index] = loop(value[index], index < hint.length ? hint[index] || hint[hint.length-1]);
-      return [null, array];
+        array[index+1] = loop(value[index], hint[index]);
+      return array;
     }
-    if (hint && typeof hint === "object") {
+    if (value && hint && typeof hint === "object") {
       const object = {};
       for (let key in value)
-        object[key] = loop(value[key], key in hint ? hint[key] : hint[Default]);
+        object[key] = loop(value[key], hint[key]);
       return object;
     }
     switch (typeof value) {
@@ -41,15 +41,17 @@ module.exports = (alias, keyof, bind) => {
       case "string": return value;
       case "symbol":
         if (value in SymbolNames)
-          return ["symbol", null, SymbolNames[value]]
-        return ["symbol", keyof.get(value) || link(value), String(value).slice(7, -1)];
+          return ["symbol", "well-knwon", SymbolNames[value]];
+        if (Symbol.keyFor(value) !== UNDEFINED)
+          return ["symbol", "shared", Symbol.keyFor(value)];
+        return ["symbol", keys.get(value) || link(value), String(value).slice(7, -1)];
       case "object":
         if (!value)
           return null;
         if (Array.isArray(value))
-          return ["array", keyof.get(value) || link(value)];
-        return ["object", keyof.get(value) || link(value)];
-      case "function": return ["function", keyof.get(value) || link(value)];
+          return ["array", keys.get(value) || link(value)];
+        return ["object", keys.get(value) || link(value)];
+      case "function": return ["function", keys.get(value) || link(value)];
     }
     throw new Error("Unrecognized type: " + typeof value);
   };

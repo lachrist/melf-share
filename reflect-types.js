@@ -1,16 +1,14 @@
 
-const Default = require("./default.js");
-
-exports.getPrototypeOf = [[], "*"];
-exports.setPrototypeOf = [["*"], "*"];
-exports.isExtensible = [[], "*"];
-exports.preventExtensions = [[], ["*"]];
-exports.getOwnPropertyDescriptor = [["*"], {[Default]:"*"}];
-exports.defineProperty = [["*", {[Default]:"*"}], "*"];
-exports.has = [["*"], "*"];
-exports.get = [["*", "*"], "*"];
-exports.set = [["*", "*", "*"], "*"];
-exports.deleteProperty = [["*"], "*"];
-exports.ownKeys = [[], ["*"]];
-exports.apply = [["*", ["*"]], "*"];
-exports.construct = [["*"], "*"];
+exports.getPrototypeOf = [["target"], "prototype"];
+exports.setPrototypeOf = [["target", "prototype"], "success"];
+exports.isExtensible = [["target"], "extensible"];
+exports.preventExtensions = [["target"], ["success"]];
+exports.getOwnPropertyDescriptor = [["target", "key"], {}];
+exports.defineProperty = [["target", "key", {}], "success"];
+exports.has = [["target", "key"], "has"];
+exports.get = [["target", "key", "receiver"], "value"];
+exports.set = [["target", "key", "value", "receiver"], "success"];
+exports.deleteProperty = [["target", "key"], "success"];
+exports.ownKeys = [["target"], ["key"]];
+exports.apply = [["target", "this", []], "result"];
+exports.construct = [["target", []], "result"];

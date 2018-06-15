@@ -9,7 +9,9 @@ const wss = new Ws.Server({noServer:true});
 server.on("request", (request, response) => {
   if (request.url.startsWith("/"+splitter)) {
     pool.request(request.url.substring(splitter.length+1), response);
-  } else {
+  } else if (request.url === "/close") {
+    process.exit(0);
+  } else if (["/alice.html", "/alice-bundle.js", "/bob.html", "/bob-bundle.js"].includes(request.url)) {
     const readable = Fs.createReadStream("."+request.url);
     readable.on("error", (error) => {
       response.writeHead(404, "Not found");

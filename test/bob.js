@@ -13,7 +13,7 @@ module.exports = (antena, callback) => {
   Melf(antena, "bob", (error, melf) => {
     if (error)
       throw error;
-    share = MelfShare(melf, {sync:true});
+    share = MelfShare(melf, {synchronous:true});
     Object.keys(Primitives).forEach((key) => {
       const primitive = share.instantiate(melf.rpcall("alice", key));
       assert(primitive === Primitives[key] || (primitive !== primitive && Primitives[key] !== Primitives[key]));

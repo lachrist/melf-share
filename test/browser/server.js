@@ -1,14 +1,13 @@
 const Http = require("http");
 const Fs = require("fs");
-const Ws = require("ws");
-const MelfPool = require("melf/server/pool");
-const pool = MelfPool(console.log.bind(console));
+const MelfServerHandlers = require("melf/server/handlers");
+const handlers = MelfServerHandlers(console);
 const server = Http.createServer();
 const splitter = "foobar";
-const wss = new Ws.Server({noServer:true});
 server.on("request", (request, response) => {
   if (request.url.startsWith("/"+splitter)) {
-    pool.request(request.url.substring(splitter.length+1), response);
+    request.url = request.url.substring(splitter.length+1);
+    handlers.request(request, response);
   } else if (request.url === "/close") {
     process.exit(0);
   } else if (["/alice.html", "/alice-bundle.js", "/bob.html", "/bob-bundle.js"].includes(request.url)) {
@@ -22,9 +21,11 @@ server.on("request", (request, response) => {
 });
 server.on("upgrade", (request, socket, head) => {
   if (request.url.startsWith("/"+splitter)) {
-    wss.handleUpgrade(request, socket, head, (websocket) => {
-      pool.connect(request.url.substring(splitter.length+1), websocket);
-    });
+    request.url = request.url.substring(splitter.length+1);
+    handlers.upgrade(request, socket, head);
   }
 });
-server.listen(8080);
+server.listen(process.argv[2], function () {
+  console.log("1) Visit: http://localhost:"+this.address().port+"/alice.html");
+  console.log("2) Visit: http://localhost:"+this.address().port+"/bob.html");
+});

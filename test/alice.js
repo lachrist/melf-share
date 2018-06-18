@@ -6,7 +6,7 @@ module.exports = (antena) => {
   Melf(antena, "alice", (error, melf) => {
     if (error)
       throw error;
-    const share = MelfShare(melf, {sync:true});
+    const share = MelfShare(melf, {synchronous:true});
     const values = Object.assign({
       object: {},
       array: [],

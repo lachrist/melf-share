@@ -44,7 +44,7 @@ module.exports = (melf, options, values) => {
     } else {
       throw new Error("Unrecognized arguments length for Reflect."+key+", got "+types.length);
     }
-    if (options.sync) {
+    if (options.synchronous) {
       traps[key] = function (target) {
         const [alias, token] = target.split("/");
         const array = Array(arguments.length);

@@ -11,7 +11,7 @@ module.exports = (melf, options) => {
   const instantiate = Instantiate(traps, keys, values);
   traps.resolve(serialize, instantiate);
   return {
-    ownerof: (value) => {
+    owner: (value) => {
       const key = keys.get(value);
       return key ? key.split("/")[0] : melf.alias;
     },

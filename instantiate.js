@@ -1,5 +1,5 @@
 
-const LenientProxy = require("lenient-proxy");
+const SeveredProxy = require("severed-proxy");
 
 const NAN = 0/0;
 const UNDEFINED = void 0;
@@ -31,7 +31,7 @@ module.exports = (traps, keys, values) => {
             return Symbol.for(data[2]);
           return values.get(data[1]) || bind(data[1], Symbol(data[2]));
       }
-      return values.get(data[1]) || bind(data[1], LenientProxy[data[0]](data[1], traps));
+      return values.get(data[1]) || bind(data[1], SeveredProxy[data[0]](data[1], traps));
     }
     if (typeof data === "object") {
       const object = {};

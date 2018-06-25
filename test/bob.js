@@ -1,4 +1,4 @@
-const Check = require("lenient-proxy/check.js");
+const Check = require("severed-proxy/check.js");
 const Melf = require("melf");
 const MelfShare = require("../main.js");
 const Primitives = require("./primitives.js");

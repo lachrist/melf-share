@@ -1,4 +1,4 @@
-const Check = require("severed-proxy/check.js");
+const VirtualProxyCheck = require("virtual-proxy/check.js");
 const Melf = require("melf");
 const MelfShare = require("../main.js");
 const Primitives = require("./primitives.js");
@@ -27,10 +27,12 @@ module.exports = (antena, callback) => {
     const my_symbol_foo_global = Symbol.for("foo");
     const symbol_foo_global = share.instantiate(melf.rpcall("alice", "symbol_foo_global"));
     assert(symbol_foo_global === my_symbol_foo_global);
-    Check.object(share.instantiate(melf.rpcall("alice", "object")));
-    Check.array(share.instantiate(melf.rpcall("alice", "array")));
-    Check.arrow(share.instantiate(melf.rpcall("alice", "arrow")));
-    Check.function(share.instantiate(melf.rpcall("alice", "function")));
+    VirtualProxyCheck.Object(share.instantiate(melf.rpcall("alice", "object")));
+    VirtualProxyCheck.Array(share.instantiate(melf.rpcall("alice", "array")));
+    VirtualProxyCheck.Arrow(share.instantiate(melf.rpcall("alice", "arrow")));
+    VirtualProxyCheck.StrictArrow(share.instantiate(melf.rpcall("alice", "strict_arrow")));
+    VirtualProxyCheck.Function(share.instantiate(melf.rpcall("alice", "function")));
+    VirtualProxyCheck.StrictFunction(share.instantiate(melf.rpcall("alice", "strict_function")));
     console.log("All assertions passed!");
     callback();
   });

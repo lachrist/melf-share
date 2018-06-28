@@ -11,7 +11,9 @@ module.exports = (antena) => {
       object: {},
       array: [],
       arrow: () => {},
+      strict_arrow: () => { "use strict"; },
       function: function () {},
+      strict_function: function () { "use strict" },
       symbol_foo: Symbol("foo"),
       symbol_iterator: Symbol.iterator,
       symbol_foo_global: Symbol.for("foo")

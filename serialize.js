@@ -56,9 +56,14 @@ module.exports = (alias, keys, values) => {
         if (!value)
           return null;
         if (Array.isArray(value))
-          return ["array", keys.get(value) || link(value)];
-        return ["object", keys.get(value) || link(value)];
-      case "function": return ["prototype" in value ? "function" : "arrow", keys.get(value) || link(value)];
+          return ["Array", keys.get(value) || link(value)];
+        return ["Object", keys.get(value) || link(value)];
+      case "function": return [
+        Reflect.getOwnPropertyDescriptor(value, "prototype") ?
+          (Reflect.getOwnPropertyDescriptor(value, "arguments") ? "Function" : "StrictFunction") :
+          "Arrow",
+        keys.get(value) || link(value)
+      ];
     }
     throw new Error("Unrecognized type: " + typeof value);
   };

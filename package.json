@@ -1,7 +1,7 @@
 {
   "name": "melf-share",
   "description": "(A)Synchronous remote references based on http://npmjs.com/melf",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "author": {
     "name": "Laurent Christophe",
     "email": "lachrist@vub.ac.be"
@@ -12,7 +12,7 @@
     "virtual-proxy": "0.0.0"
   },
   "devDependencies": {
-    "melf": "2.0.4"
+    "melf": "^2.0.5"
   },
   "license": "MIT",
   "main": "main.js",

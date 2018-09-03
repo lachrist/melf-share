@@ -9,7 +9,6 @@ const request_middleware = orchestrator.RequestMiddleware("__melf_share_traffic_
 const upgrade_middleware = orchestrator.UpgradeMiddleware("__melf_share_traffic__");
 const server = Http.createServer();
 server.on("request", (request, response) => {
-  console.log("yo", request.url);
   if (!request_middleware(request, response)) {
     if (["/alice.html", "/alice-bundle.js", "/bob.html", "/bob-bundle.js"].includes(request.url)) {
       Fs.createReadStream(Path.join(__dirname, request.url)).pipe(response);
@@ -20,7 +19,6 @@ server.on("request", (request, response) => {
   }
 });
 server.on("upgrade", (request, socket, head) => {
-  console.log("yo-upgrade", request.url);
   if (!upgrade_middleware(request, socket, head)) {
     request.writeHead(400);
     request.end();

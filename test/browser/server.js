@@ -1,31 +1,29 @@
 const Http = require("http");
+const Path = require("path");
 const Fs = require("fs");
-const MelfServerHandlers = require("melf/server/handlers");
-const handlers = MelfServerHandlers(console);
+const MelfOrchestrator = require("melf/orchestrator");
+const orchestrator = MelfOrchestrator((origin, recipient, message) => {
+  console.log(origin+" >> "+recipient+": "+message);
+});
+const request_middleware = orchestrator.RequestMiddleware("__melf_share_traffic__");
+const upgrade_middleware = orchestrator.UpgradeMiddleware("__melf_share_traffic__");
 const server = Http.createServer();
-const splitter = "foobar";
 server.on("request", (request, response) => {
-  if (request.url.startsWith("/"+splitter)) {
-    request.url = request.url.substring(splitter.length+1);
-    handlers.request(request, response);
-  } else if (request.url === "/close") {
-    process.exit(0);
-  } else if (["/alice.html", "/alice-bundle.js", "/bob.html", "/bob-bundle.js"].includes(request.url)) {
-    const readable = Fs.createReadStream("."+request.url);
-    readable.on("error", (error) => {
-      response.writeHead(404, "Not found");
-      response.end(error.message);
-    });
-    readable.pipe(response);
+  console.log("yo", request.url);
+  if (!request_middleware(request, response)) {
+    if (["/alice.html", "/alice-bundle.js", "/bob.html", "/bob-bundle.js"].includes(request.url)) {
+      Fs.createReadStream(Path.join(__dirname, request.url)).pipe(response);
+    } else {
+      response.writeHead(404);
+      response.end();
+    }
   }
 });
 server.on("upgrade", (request, socket, head) => {
-  if (request.url.startsWith("/"+splitter)) {
-    request.url = request.url.substring(splitter.length+1);
-    handlers.upgrade(request, socket, head);
+  console.log("yo-upgrade", request.url);
+  if (!upgrade_middleware(request, socket, head)) {
+    request.writeHead(400);
+    request.end();
   }
 });
-server.listen(process.argv[2], function () {
-  console.log("1) Visit: http://localhost:"+this.address().port+"/alice.html");
-  console.log("2) Visit: http://localhost:"+this.address().port+"/bob.html");
-});
+server.listen(process.argv[process.argv.length-1]);

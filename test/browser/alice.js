@@ -1,2 +1,1 @@
-const Antena = require("antena/browser");
-require("../alice.js")(new Antena().fork("foobar"));
+require("../alice.js")("__melf_share_traffic__");

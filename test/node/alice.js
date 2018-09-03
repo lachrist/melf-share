@@ -1,2 +1,1 @@
-const Antena = require("antena/node");
-require("../alice.js")(new Antena(process.argv[2]));
+require("../alice.js")(process.argv[2]);

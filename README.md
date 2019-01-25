@@ -7,12 +7,6 @@
 * `melf :: melf.Melf`
 * `synchronous :: boolean | undefined`
 * `namespace :: string | undefined`
-* `alias = ownerof(value)`
-  * `value :: object | symbol`
-  * `alias :: string`
-* `success = discard(value)`
-  * `value :: object | symbol`
-  * `success :: boolean`
 * `data = serialize(value, hint)`
   * `value :: *`
   * `hint :: Hint`
@@ -20,20 +14,26 @@
 * `value = instantiate(data)`
   * `data :: JSON`
   * `value :: *`
+* `alias = ownerof(value)`
+  * `value :: object | symbol`
+  * `alias :: string`
+* `success = discard(value)`
+  * `value :: object | symbol`
+  * `success :: boolean`
 
 ## Hints
 
 * Primitive:
-  Serialize *any* value, the value of the primitive is for documentation only.
+  Serialise *any* value (the value of the primitive is only for documentation purpose).
   After instantiation:
-  * non-symbolic primitives:
+  * Non-symbolic primitives:
     will refer to the same value (`undefined`, `NaN`, `+Infinity`, `-Infinity`, `-0` are supported).
-  * [well-known and global symbol](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol):
+  * [Well-known and global symbol](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol):
     will refer the local corresponding well-known/global symbol.
-  * other symbols:
+  * Other symbols:
     will refer to a dedicated symbol with the same string representation.
-  * objects:
-    will refer to a dedicated proxy whose traps forward operations to the serializing process.
+  * Objects:
+    will refer to a dedicated proxy whose traps forward operations to the serialising process.
 * Array of hint:
   The elements of a hint-array are hints which will be used to convert the corresponding element of the given value.
   Instantiation will result to a new local array.

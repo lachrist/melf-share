@@ -7,7 +7,7 @@ const NEGATIVE_INFINITY = -1/0;
 const POSITIVE_INFINITY = 1/0;
 const NEGATIVE_ZERO = -0;
 
-module.exports = (traps, keys, values) => {
+module.exports = (handlers, keys, values) => {
   const bind = (key, value) => {
     keys.set(value, key)
     values.set(key, value);
@@ -31,7 +31,7 @@ module.exports = (traps, keys, values) => {
             return Symbol.for(data[2]);
           return values.get(data[1]) || bind(data[1], Symbol(data[2]));
       }
-      return values.get(data[1]) || bind(data[1], VirtualProxy[data[0]](data[1], traps));
+      return values.get(data[1]) || bind(data[1], VirtualProxy[data[0]](data[1], handlers));
     }
     if (typeof data === "object") {
       const object = {};

@@ -1,10 +1,7 @@
 
 const ReflectTypes = require("./reflect-types.js");
 
-module.exports = (melf, options, values) => {
-  let serialize;
-  let instantiate;
-  const traps = {};
+module.exports = (handlers, melf, options, values, serialize, instantiate) => {
   Reflect.ownKeys(Reflect).forEach((key) => {
     const name = "melf-share-" + ("namespace" in options ? options.namespace+"-" : "") + key;
     const types = ReflectTypes[key][0];
@@ -45,7 +42,7 @@ module.exports = (melf, options, values) => {
       throw new Error("Unrecognized arguments length for Reflect."+key+", got "+types.length);
     }
     if (options.synchronous) {
-      traps[key] = function (target) {
+      handlers[key] = function (target) {
         const [alias, token] = target.split("/");
         const array = Array(arguments.length);
         array[0] = token;
@@ -54,7 +51,7 @@ module.exports = (melf, options, values) => {
         return instantiate(melf.rpcall(alias, name, array));
       };
     } else {
-      traps[key] = function (target) {
+      handlers[key] = function (target) {
         return new Promise((resolve, reject) => {
           const [alias, token] = target.split("/");
           const array = Array(arguments.length);
@@ -70,10 +67,4 @@ module.exports = (melf, options, values) => {
       }
     }
   });
-  traps.resolve = (s, i) => {
-    serialize = s;
-    instantiate = i;
-    delete traps.resolve;
-  };
-  return traps;
 };

@@ -1,15 +1,15 @@
 
-const RemoteTraps = require("./remote-traps.js");
+const Handlers = require("./handlers.js");
 const Serialize = require("./serialize.js");
 const Instantiate = require("./instantiate.js");
 
 module.exports = (melf, options) => {
   const keys = new Map();
   const values = new Map();
-  const traps = RemoteTraps(melf, options, values);
+  const handlers = Object.create(null);
   const serialize = Serialize(melf.alias, keys, values);
-  const instantiate = Instantiate(traps, keys, values);
-  traps.resolve(serialize, instantiate);
+  const instantiate = Instantiate(handlers, keys, values);
+  Handlers(handlers, melf, options, values, serialize, instantiate);
   return {
     owner: (value) => {
       const key = keys.get(value);

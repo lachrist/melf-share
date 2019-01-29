@@ -9,7 +9,7 @@
   "repository": "lachrist/melf-share",
   "homepage": "http://github.com/lachrist/melf-share",
   "dependencies": {
-    "virtual-proxy": "0.0.8"
+    "virtual-proxy": "0.0.9"
   },
   "devDependencies": {
     "melf": "2.0.8"

@@ -1,12 +1,12 @@
 const Http = require("http");
 const Path = require("path");
 const Fs = require("fs");
-const MelfOrchestrator = require("melf/orchestrator");
-const orchestrator = MelfOrchestrator((origin, recipient, message) => {
+const MelfReceptor = require("melf/receptor");
+const receptor = MelfReceptor((origin, recipient, message) => {
   console.log(origin+" >> "+recipient+": "+message);
 });
-const request_middleware = orchestrator.RequestMiddleware("__melf_share_traffic__");
-const upgrade_middleware = orchestrator.UpgradeMiddleware("__melf_share_traffic__");
+const request_middleware = receptor.RequestMiddleware("__melf_share_traffic__");
+const upgrade_middleware = receptor.UpgradeMiddleware("__melf_share_traffic__");
 const server = Http.createServer();
 server.on("request", (request, response) => {
   if (!request_middleware(request, response)) {

@@ -5,4 +5,5 @@ sleep 1
 node alice.js /tmp/melf-share.sock &
 sleep 1
 node bob.js /tmp/melf-share.sock
+sleep 5
 kill $SERVER_PID

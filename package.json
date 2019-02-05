@@ -9,10 +9,10 @@
   "repository": "lachrist/melf-share",
   "homepage": "http://github.com/lachrist/melf-share",
   "dependencies": {
-    "virtual-proxy": "0.0.9"
+    "virtual-proxy": "0.0.10"
   },
   "devDependencies": {
-    "melf": "2.0.8"
+    "melf": "^2.0.9"
   },
   "license": "MIT",
   "main": "main.js",

@@ -1,4 +1,6 @@
 
+const Owned = require("./owned.js");
+
 const wellkown = {__proto__:null};
 Reflect.ownKeys(Symbol).forEach((name) => {
   if (typeof Symbol[name] === "symbol") {
@@ -6,33 +8,107 @@ Reflect.ownKeys(Symbol).forEach((name) => {
   }
 });
 
-module.exports = (keys, values, alias) => {
+const has = (object, key) => {
+  while (object) {
+    if (Reflect.getOwnPropertyDescriptor(object, key))
+      return true;
+    object = Reflect.getPrototypeOf(object);
+  }
+  return false;
+};
+
+const miss = Symbol("miss");
+
+module.exports = (oids, refs, alias) => {
+
   let counter = 0;
-  const keyof = (value) => {
-    let key = keys.get(value);
-    if (key)
-      return key;
-    key = alias + "|" + (++counter).toString(36);
-    keys.set(value, key);
-    values.set(key, value);
-    return key;
+  
+  const oidof = (ref) => {
+    let oid = oids.get(ref);
+    if (oid)
+      return oid;
+    oid = alias + "|" + (++counter).toString(36);
+    oids.set(ref, oid);
+    refs.set(oid, ref);
+    return oid;
   };
+
+  const get = (target, key, receiver) => {
+    while (target) {
+      if (!Owned(target, oids, alias))
+        return miss;
+      const descriptor = Reflect.getOwnPropertyDescriptor(target, key);
+      if (descriptor) {
+        if (Reflect.getOwnPropertyDescriptor(descriptor, "value"))
+          return descriptor.value;
+        if (descriptor.get) {
+          if (Owned(descriptor.get, oids, alias))
+            return Reflect.apply(descriptor.get, receiver, []);
+          return miss;
+        }
+        return undefined
+      }
+      target = Reflect.getPrototypeOf(target);
+    }
+    return undefined;
+  };
+
   const loop = (value, hint) => {
-    if (value && Array.isArray(hint)) {
-      let length = value.length
-      const array = Array(length);
-      for (let index = 0; index < length; index++)
-        array[index] = loop(value[index], hint[index]);
-      return array;
-    }
-    if (value && hint && typeof hint === "object") {
-      const object = {__proto__:null};
-      for (let key in value)
-        object[key] = loop(value[key], hint[key]);
-      return object;
-    }
     if (hint === "target")
       return "target|" + value.alias + "|" + value.token;
+    miss: if (Array.isArray(hint) && value !== null && (typeof value === "object" || typeof value === "function")) {
+      const length = get(value, "length", value);
+      if (length === miss)
+        break miss;
+      const array = Array(length);
+      for (let index = 0; index < length; index++) {
+        array[index] = loop(get(value, index, value), hint[index]);
+        if (array[index] === miss) {
+          break miss;
+        }
+      }
+      return array;
+    }
+    miss: if (hint !== null && typeof hint === "object" && value !== null && (typeof value === "object" || typeof value === "function")) {
+      const object = {__proto__:null};
+      let target = value;
+      while (target) {
+        if (!Owned(target, oids, alias))
+          break miss;
+        const keys = Object.keys(target);
+        for (let index = 0; index < keys.length; index++) {
+          object[keys[index]] = loop(get(target, keys[index], target), hint[keys[index]]);
+          if (object[keys[index]] === miss) {
+            break miss;
+          }
+        }
+        target = Reflect.getPrototypeOf(target);
+      }
+      return object;
+    }
+    miss: if ((hint === "number" || hint === "default" || hint === "string") && value !== null && (typeof value === "object" || typeof value === "function")) {
+      // https://www.ecma-international.org/ecma-262/9.0/index.html#sec-toprimitive
+      const toPrimitive = get(value, Symbol.toPrimitive, value);
+      if (toPrimitive === miss || !Owned(toPrimitive, oids, alias))
+        break miss;
+      if (toPrimitive !== undefined) {
+        value = Reflect.apply(toPrimitive, value, [hint]);
+      } else {
+        const method1 = get(value, hint === "string" ? "toString" : "valueOf", value);
+        if (method1 === miss || !Owned(method1, oids, alias))
+          break miss;
+        if (typeof method1 === "function") {
+          value = Reflect.apply(method1, value, []);
+        } else {
+          const method2 = get(value, hint === "string" ? "valueOf" : "toString", value);
+          if (method2 === miss || !Owned(method2, oids, alias))
+            break miss;
+          if (typeof method2 === "function") {
+            value = Reflect.apply(method2, value, []);
+          }
+        }
+      }
+    }
     switch (typeof value) {
       case "undefined": return "undefined";
       case "boolean": return value;
@@ -52,19 +128,20 @@ module.exports = (keys, values, alias) => {
           return "symbol-wellknown|" + wellkown[value];
         if (Symbol.keyFor(value) !== undefined)
           return "symbol-global|" + Symbol.keyFor(value);
-        return "symbol|" + keyof(value) + "|" + String(value).slice(7, -1);
+        return "symbol|" + oidof(value) + "|" + String(value).slice(7, -1);
       case "object":
         if (value === null)
           return null;
         if (Array.isArray(value))
-          return "array|" + keyof(value);
-        return "object|" + keyof(value);
+          return "array|" + oidof(value);
+        return "object|" + oidof(value);
       case "function":
-        if (!Reflect.getOwnPropertyDescriptor(value, "prototype"))
-          return "arrow|" + keyof(value);
-        if (Reflect.getOwnPropertyDescriptor(value, "arguments"))
-          return "function|" + keyof(value);
-        return "strict-function|" + keyof(value);
+        try {
+          Reflect.construct(Boolean, [], value);
+        } catch (error) {
+          return "arrow|" + oidof(value);
+        }
+        return "function|" + oidof(value);
     }
     throw new Error("Unrecognized type: " + typeof value);
   };

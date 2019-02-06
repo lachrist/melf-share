@@ -86,7 +86,6 @@ module.exports = (address) => {
     assert(Reflect.getPrototypeOf(Reflect.construct(function_this1, [], constructor)) === constructor.prototype);
     const x1 = await function_this2.construct([], constructor);
     const x2 = await x1.getPrototypeOf();
-    debugger;
     assert(x2 === constructor.prototype);
     // Function Strict
     const [strict_function_this1, strict_function_this2] = get("strict_function_this");
@@ -110,10 +109,10 @@ module.exports = (address) => {
     assert(Reflect.defineProperty(object1, "foo", {__proto__:null, value:123}) === true);
     assert(await object2.defineProperty("foo", {__proto__:null, value:123}) === true);
     assert(Reflect.getOwnPropertyDescriptor(object1, "foo").value === 123);
-    assert((await object2.getOwnPropertyDescriptor(object2, "foo")).value === 123);
+    assert((await object2.getOwnPropertyDescriptor("foo")).value === 123);
     assert(Reflect.set(object1, "bar", 123, object1) === true)
     assert(await object2.set("bar", 123, object2) === true);
-    assert(Reflect.get(oject1, "bar", object1) === 123);
+    assert(Reflect.get(object1, "bar", object1) === 123);
     assert(await object2.get("bar", object2) === 123);
     assert(Reflect.has(object1, "bar") === true);
     assert(await object2.has("bar") === true);

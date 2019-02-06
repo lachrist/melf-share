@@ -1,6 +1,6 @@
 
 module.exports = (value, oids, alias) => {  
-  if (value === null || (typeof value !== "object" && typeof value !== "funtion"))
+  if (value === null || (typeof value !== "object" && typeof value !== "function"))
     return true;
   const oid = oids.get(value);
   if (oid === undefined)

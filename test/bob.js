@@ -1,6 +1,6 @@
 
 const Melf = require("melf");
-const MelfShare = require("../main.js");
+const MelfShare = require("../lib/main.js");
 const Primitives = require("./primitives.js");
 
 const isconstructor = (value) => {

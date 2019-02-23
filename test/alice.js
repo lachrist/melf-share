@@ -17,7 +17,12 @@ module.exports = (address) => {
       strict_function_this: function () { "use strict"; return this; },
       symbol_foo: Symbol("foo"),
       symbol_wellknown_iterator: Symbol.iterator,
-      symbol_global_foo: Symbol.for("foo")
+      symbol_global_foo: Symbol.for("foo"),
+      object_symbol_primitive_foo: {__proto__:null, [Symbol.toPrimitive]: () => "foo"},
+      object_toString_foo: {__proto__:null, toString: () => "foo"},
+      object_valueOf_123: {__proto__:null, valueOf: () => 123},
+      data_descriptor: {__proto__:null, value:123, writable:true, configurable:true, enumerable:true},
+      accessor_descriptor: {__proto__:null, get:() => {}, set:() => {}, configurable:true, enumerable:true}
     }, Primitives);
     Object.keys(values).forEach((key) => {
       melf.rprocedures[key] = (origin, data, callback) => {

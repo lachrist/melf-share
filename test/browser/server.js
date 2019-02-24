@@ -1,7 +1,7 @@
 const Http = require("http");
 const Path = require("path");
 const Fs = require("fs");
-const MelfReceptor = require("melf/receptor");
+const MelfReceptor = require("melf/lib/receptor");
 const receptor = MelfReceptor((origin, recipient, message) => {
   console.log(origin+" >> "+recipient+": "+message);
 });

@@ -24,4 +24,6 @@ server.on("upgrade", (request, socket, head) => {
     request.end();
   }
 });
-server.listen(process.argv[process.argv.length-1]);
+server.listen(process.argv[process.argv.length-1], () => {
+  console.log("Listening on ", server.address());
+});

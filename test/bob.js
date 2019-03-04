@@ -13,6 +13,15 @@ module.exports = (address) => {
   Melf(address, "bob", (error, melf) => {
     if (error)
       throw error;
+    const done = (message) => {
+      console.log(message);
+      melf.rpcall("alice", "terminate", null);
+      melf.terminate((error) => {
+        if (error) {
+          throw error;
+        }
+      });
+    };
     const main = async () => {
       share1 = MelfShare(melf, {synchronous:true, namespace:"sync"});
       share2 = MelfShare(melf, {synchronous:false, namespace:"async"});
@@ -34,7 +43,7 @@ module.exports = (address) => {
         }
       };
       const get = (name) => {
-        const array = melf.rpcall("alice", name);
+        const array = melf.rpcall("alice", name, null);
         return [
           share1.instantiate(array[0]),
           share2.instantiate(array[1])
@@ -205,9 +214,9 @@ module.exports = (address) => {
       return counter;
     };
     main().then((counter) => {
-      console.log(counter+" assertions passed");
+      done(counter+" assertions passed");
     }, (reason) => {
-      console.log(reason);
+      done(String(reason))
     });
   });
 };

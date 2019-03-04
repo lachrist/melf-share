@@ -32,5 +32,13 @@ module.exports = (address) => {
         ]);
       };
     });
+    melf.rprocedures.terminate = (origin, data, callback) => {
+      callback(null, null);
+      melf.terminate((error) => {
+        if (error) {
+          throw error;
+        }
+      });
+    };
   });
 };

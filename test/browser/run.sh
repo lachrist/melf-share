@@ -5,5 +5,4 @@ sleep 2
 open "http://localhost:8080/alice.html"
 open "http://localhost:8080/bob.html"
 sleep 4
-kill $!
 rm alice-bundle.js bob-bundle.js

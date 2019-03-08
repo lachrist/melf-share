@@ -27,3 +27,4 @@ server.on("upgrade", (request, socket, head) => {
 server.listen(process.argv[process.argv.length-1], () => {
   console.log("Listening on ", server.address());
 });
+setTimeout(() => { server.close() }, 6000);

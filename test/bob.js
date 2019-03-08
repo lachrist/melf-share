@@ -16,11 +16,7 @@ module.exports = (address) => {
     const done = (message) => {
       console.log(message);
       melf.rpcall("alice", "terminate", null);
-      melf.terminate((error) => {
-        if (error) {
-          throw error;
-        }
-      });
+      melf.emitter.terminate();
     };
     const main = async () => {
       share1 = MelfShare(melf, {synchronous:true, namespace:"sync"});

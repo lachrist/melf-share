@@ -6,3 +6,4 @@ const receptor = MelfReceptor((origin, ricipient, message) => {
 const server = Net.createServer();
 server.on("connection", receptor.ConnectionListener());
 server.listen(process.argv[2]);
+setTimeout(() => { server.close() }, 4000);

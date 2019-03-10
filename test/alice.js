@@ -6,6 +6,7 @@ module.exports = (address) => {
   Melf(address, "alice", (error, melf) => {
     if (error)
       throw error;
+    melf.catch((error) => { throw error });
     const share1 = MelfShare(melf, {synchronous:true, namespace:"sync"});
     const share2 = MelfShare(melf, {synchronous:false, namespace:"async"});
     const values = Object.assign({
@@ -33,8 +34,8 @@ module.exports = (address) => {
       };
     });
     melf.rprocedures.terminate = (origin, data, callback) => {
-      melf.emitter.onterminate = () => { callback(null, null) };
-      melf.emitter.terminate();
+      melf.onterminate = () => { callback(null, null) };
+      melf.terminate();
     };
   });
 };

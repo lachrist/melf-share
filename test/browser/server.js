@@ -1,12 +1,12 @@
 const Http = require("http");
 const Path = require("path");
 const Fs = require("fs");
-const MelfReceptor = require("melf/lib/receptor");
-const receptor = MelfReceptor((origin, recipient, message) => {
+const Distributor = require("melf/lib/distributor");
+const distributor = Distributor((origin, recipient, message) => {
   console.log(origin+" >> "+recipient+": "+message);
 });
-const request_middleware = receptor.RequestMiddleware("__melf_share_traffic__");
-const upgrade_middleware = receptor.UpgradeMiddleware("__melf_share_traffic__");
+const request_middleware = distributor.RequestMiddleware("__melf_share_traffic__");
+const upgrade_middleware = distributor.UpgradeMiddleware("__melf_share_traffic__");
 const server = Http.createServer();
 server.on("request", (request, response) => {
   if (!request_middleware(request, response)) {
@@ -27,4 +27,4 @@ server.on("upgrade", (request, socket, head) => {
 server.listen(process.argv[process.argv.length-1], () => {
   console.log("Listening on ", server.address());
 });
-setTimeout(() => { server.close() }, 6000);
+setTimeout(() => { server.close() }, 3000);

@@ -13,10 +13,11 @@ module.exports = (address) => {
   Melf(address, "bob", (error, melf) => {
     if (error)
       throw error;
+    melf.catch((error) => { throw error });
     const done = (message) => {
       console.log(message);
       melf.rpcall("alice", "terminate", null);
-      melf.emitter.terminate();
+      melf.terminate();
     };
     const main = async () => {
       share1 = MelfShare(melf, {synchronous:true, namespace:"sync"});

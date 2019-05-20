@@ -1,7 +1,7 @@
 {
   "name": "melf-share",
   "description": "(A)Synchronous remote references based on http://npmjs.com/melf",
-  "version": "0.1.11",
+  "version": "0.1.12",
   "author": {
     "name": "Laurent Christophe",
     "email": "lachrist@vub.ac.be"
